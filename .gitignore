@@ -1,21 +1,20 @@
+# Python environments
+.venv/
+venv/
+
 # Python cache
 __pycache__/
 *.py[cod]
 
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Jupyter temporary files
+# Jupyter checkpoints
 .ipynb_checkpoints/
 
-# Environment variables and secrets
+# Secrets
 .env
 
-# Operating system files
-.DS_Store
-Thumbs.db
+# Processed datasets: don't commit until approved
+data/processed/
 
-# Logs
-*.log
+# Model artifacts
+*.joblib
+*.pkl
