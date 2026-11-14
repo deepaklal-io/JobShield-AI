@@ -16,5 +16,4 @@ __pycache__/
 data/processed/
 
 # Model artifacts
-*.joblib
 *.pkl
