@@ -49,6 +49,8 @@ def explain_frame(row, pipeline, top_n=8):
     x = sparse.csr_matrix(pipeline[:-1].transform(row))
 
     if hasattr(classifier, "coef_"):
+        if list(classifier.classes_) != [0, 1]:
+            return {"method": "unavailable", "toward_fraud": [], "toward_legit": []}
         contrib = np.asarray(x.multiply(classifier.coef_.ravel()).todense()).ravel()
         method = "linear_contribution"
     else:
