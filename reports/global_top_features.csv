@@ -1,21 +1,21 @@
 toward_fraud,fraud_weight,toward_legit,legit_weight
-"title: ""administrative""",4.349968911927287,industry = Restaurants,-3.212906606259039
-department = Information Technology ,4.1967587044842976,industry = Internet,-2.9535292411921312
-"company_profile: ""accion""",3.7977223774076285,has_company_logo,-2.9198434544479825
-"location = US, CA, ",3.51842501348146,"company_profile: ""we""",-2.5735047366177293
-"location = US, WA, Bellevue",3.4599893128359716,"location = GR, I, Athens",-2.5463481147376763
-"location = MY, , ",3.336566663300448,"description: ""our""",-2.355677134751503
-"location = US, OH, Groveport",3.2041193748708463,function = Health Care Provider,-2.3507363507915007
-"description: ""link""",2.956202300360446,function = Production,-2.1273464820695565
-"location = US, TX, AUSTIN",2.9313949119515663,"company_profile: ""that""",-2.00516242822221
-"requirements: ""high school""",2.85227847663216,"description: ""will""",-1.9821877961776448
-industry = Accounting,2.8347459877795087,"company_profile: ""you""",-1.8521099650622548
-"location = US, TX, Houston",2.7847374175904207,"description: ""client""",-1.833540282055361
-industry = Oil & Energy,2.7325685572578964,"company_profile: ""of""",-1.8050299106899057
-"location = US, IN, Bloomington",2.7236228256697905,"description: ""will be""",-1.7904913838645788
-"title: ""customer assistant""",2.6775648120753486,"description: ""an""",-1.7719404789419817
-"location = AU, , ",2.6661887145889476,required_experience = Associate,-1.7533013215283175
-"title: ""position""",2.659204772535135,"company_profile: ""recruitment""",-1.7517115842959852
-department = biotech,2.6331562132555244,"title: ""developer""",-1.7336660246685391
-"location = US, OH, Cincinnati",2.6183090003336025,"requirements: ""to""",-1.7299552016507962
-"company_profile: ""his""",2.6082119921092595,"location = CA, AB, Edmonton",-1.715487510617822
+"title: ""administrative""",4.159857693197537,industry = Restaurants,-3.1223491013105504
+department = Information Technology ,4.1105109691114,,-2.8598190966726427
+"company_profile: ""accion""",3.727128713351189,industry = Internet,-2.7185677371699524
+"location = US, CA, ",3.4582642481256505,"company_profile: ""we""",-2.492868083184936
+"location = US, WA, Bellevue",3.4196227926061007,"location = GR, I, Athens",-2.412381055009727
+"location = MY, , ",3.312835865760708,function = Health Care Provider,-2.332028148852509
+"location = US, OH, Groveport",3.1508656625440925,"description: ""our""",-2.2994941181914252
+"description: ""link""",2.9136902499792203,function = Production,-2.050702849263129
+"location = US, TX, AUSTIN",2.852821636919518,"company_profile: ""that""",-1.9439917137982334
+industry = Accounting,2.829186869855196,"description: ""will""",-1.9268690054964768
+"location = US, TX, Houston",2.79856963735835,"description: ""client""",-1.8343235162979745
+"requirements: ""high school""",2.75943002879207,"company_profile: ""you""",-1.8205099875097075
+"location = US, IN, Bloomington",2.6851913792858277,"company_profile: ""of""",-1.780615774741935
+"title: ""customer assistant""",2.641326092060116,"description: ""will be""",-1.75022111649028
+"location = AU, , ",2.6249968280483125,"description: ""an""",-1.7250436937588032
+industry = Oil & Energy,2.614679344294333,"location = CA, AB, Edmonton",-1.7226108971610692
+"title: ""position""",2.587486559446825,"company_profile: ""recruitment""",-1.7019685043799417
+"location = US, OH, Cincinnati",2.5863782819002754,"requirements: ""to""",-1.6932747715235947
+department = biotech,2.578874954796976,industry = Food & Beverages,-1.6762576241070604
+"company_profile: ""his""",2.5634397064832246,"title: ""developer""",-1.6442806561901897
