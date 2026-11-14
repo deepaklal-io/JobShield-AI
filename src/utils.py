@@ -26,7 +26,8 @@ def predict_posting(posting, pipeline, threshold):
         values[col] = value
 
     row = pd.DataFrame([values])
-    probability = float(pipeline.predict_proba(row)[:, 1][0])
+    fraud_index = list(pipeline.classes_).index(1)
+    probability = float(pipeline.predict_proba(row)[:, fraud_index][0])
     return {
         "fraud_probability": round(probability, 4),
         "is_fraud": bool(probability >= threshold),
