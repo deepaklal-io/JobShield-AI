@@ -88,14 +88,27 @@ def index():
 
     try:
         result = predict_posting(posting, pipeline, threshold)
-        result["percent"] = round(result["fraud_probability"] * 100, 1)
-        result["risk_level"] = risk_level(result["fraud_probability"])
-        result["explanation"] = explain_posting(posting, pipeline)
     except Exception as exc:
         return page(form, error=f"Could not score this posting: {exc}")
 
-    return page(form, result=result)
+    result["percent"] = round(result["fraud_probability"] * 100, 1)
+    result["risk_level"] = risk_level(result["fraud_probability"])
+    result["notes"] = []
 
+    if not posting["company_profile"]:
+        result["notes"].append(
+            "No company profile provided. In our training data, about 17.5% of "
+            "postings without one were fraudulent, versus 2.0% of postings with one, "
+            "so adding it can change the score a lot.")
+
+    try:
+        result["explanation"] = explain_posting(posting, pipeline)
+    except Exception:
+        app.logger.exception("Explanation failed")
+        result["explanation"] = {"method": "unavailable", "toward_fraud": [], "toward_legit": []}
+        result["notes"].append("The explanation could not be generated for this posting.")
+
+    return page(form, result=result)
 
 if __name__ == "__main__":
         app.run(debug=False)

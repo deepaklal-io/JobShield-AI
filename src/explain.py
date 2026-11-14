@@ -33,8 +33,10 @@ def _pretty(name):
     if prefix == "categorical":
         for col in CATEGORICAL_FEATURES:
             if rest.startswith(col + "_"):
-                return f"{col} = {rest[len(col) + 1:]}"
-    return rest or name
+                value = rest[len(col) + 1:]
+                if value == "Unknown":
+                    return f"{col.replace('_', ' ')} not provided"
+                return f"{col} = {value}"
 
 
 def explain_frame(row, pipeline, top_n=8):

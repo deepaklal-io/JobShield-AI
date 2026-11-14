@@ -60,6 +60,7 @@
     <p><strong>{{ result.percent }}%</strong> fraud risk &middot; {{ result.risk_level }}
        (flagged at {{ (result.threshold * 100)|round|int }}% or more)</p>
     <div class="meter"><div style="width: {{ result.percent }}%"></div></div>
+    {% for note in result.notes %}<p class="muted"><strong>Note:</strong> {{ note }}</p>{% endfor %}
     {% if result.explanation.method != 'unavailable' %}
     <p class="muted">Words and fields that moved this score the most.</p>
     <div class="grid">
