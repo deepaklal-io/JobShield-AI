@@ -1,19 +1,14 @@
 # Python environments
 .venv/
 venv/
-
-# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 
-# Jupyter checkpoints
+# Jupyter
 .ipynb_checkpoints/
 
-# Secrets
-.env
+# Data files
+data/
 
-# Processed datasets: don't commit until approved
-data/processed/
-
-# Model artifacts
-*.pkl
+# Keep the trained model
+!models/job_fraud_pipeline.joblib
