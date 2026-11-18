@@ -26,17 +26,38 @@ def posting_to_frame(posting):
 
 
 def _pretty(name):
-    """'tfidf_description__free money' -> 'description: "free money"'."""
+    """Convert transformed feature names into readable labels."""
     prefix, _, rest = name.partition("__")
+
     if prefix.startswith("tfidf_"):
         return f'{prefix[6:]}: "{rest}"'
+
     if prefix == "categorical":
         for col in CATEGORICAL_FEATURES:
             if rest.startswith(col + "_"):
                 value = rest[len(col) + 1:]
                 if value == "Unknown":
                     return f"{col.replace('_', ' ')} not provided"
-                return f"{col} = {value}"
+                return f"{col.replace('_', ' ')}: {value}"
+
+    if prefix == "salary":
+        labels = {
+            "salary_min": "Minimum salary",
+            "salary_max": "Maximum salary",
+            "salary_missing": "Salary not provided",
+            "salary_unparsed": "Salary format not recognized",
+        }
+        return labels.get(rest, rest)
+
+    if prefix == "binary":
+        labels = {
+            "telecommuting": "Remote work",
+            "has_company_logo": "Company logo present",
+            "has_questions": "Screening questions present",
+        }
+        return labels.get(rest, rest)
+
+    return rest or name
 
 
 def explain_frame(row, pipeline, top_n=8):
