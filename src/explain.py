@@ -7,7 +7,10 @@ For tree models only global feature importances exist, so direction is not repor
 import numpy as np
 import pandas as pd
 from scipy import sparse
+import re
 from sklearn.compose import ColumnTransformer
+from webcolors import names
+from webcolors import names
 
 from src.preprocessing import RAW_INPUT_COLUMNS, BINARY_FEATURES, CATEGORICAL_FEATURES
 
@@ -25,9 +28,18 @@ def posting_to_frame(posting):
     return pd.DataFrame([values])
 
 
-def _pretty(name):
+def _pretty(name, salary_range=None, input_context=False):
     """Convert transformed feature names into readable labels."""
     prefix, _, rest = name.partition("__")
+
+    salary_text = "" if salary_range is None else str(salary_range).strip()
+    salary_missing = not salary_text or salary_text.lower() in {"nan", "none"}
+    salary_parsed = bool(
+        re.fullmatch(
+            r"\s*\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?\s*",
+            salary_text
+        )
+    )
 
     if prefix.startswith("tfidf_"):
         return f'{prefix[6:]}: "{rest}"'
@@ -44,9 +56,26 @@ def _pretty(name):
         labels = {
             "salary_min": "Minimum salary",
             "salary_max": "Maximum salary",
-            "salary_missing": "Salary not provided",
-            "salary_unparsed": "Salary format not recognized",
+            "salary_missing": "Salary missing indicator",
+            "salary_unparsed": "Salary format indicator",
         }
+
+        if input_context and rest == "salary_missing":
+            return (
+                "Salary not provided indicator"
+                if salary_missing
+                else "Salary provided (missingness indicator)"
+            )
+
+        if input_context and rest == "salary_unparsed":
+            if salary_missing:
+                return "Salary format not applicable (salary missing)"
+            return (
+                "Salary format recognized indicator"
+                if salary_parsed
+                else "Salary format not recognized indicator"
+            )
+
         return labels.get(rest, rest)
 
     if prefix == "binary":
@@ -79,10 +108,70 @@ def explain_frame(row, pipeline, top_n=8):
     else:
         return {"method": "unavailable", "toward_fraud": [], "toward_legit": []}
 
-    order = np.argsort(contrib)
-    fraud = [(names[i], contrib[i]) for i in order[::-1][:top_n] if contrib[i] > 0]
-    legit = [(names[i], contrib[i]) for i in order[:top_n] if contrib[i] < 0]
-    fmt = lambda items: [{"feature": _pretty(n), "weight": round(float(w), 4)} for n, w in items]
+    # Identify which salary features are meaningful for this input.
+    salary_range = row.iloc[0].get("salary_range")
+
+    salary_text = (
+        "" if salary_range is None or pd.isna(salary_range)
+        else str(salary_range).strip()
+    )
+
+    salary_missing = not salary_text
+
+    salary_parsed = bool(
+        re.fullmatch(
+            r"\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?",
+            salary_text
+        )
+    )
+
+    salary_unparsed = bool(salary_text) and not salary_parsed
+
+    # Exclude inactive salary features from the explanation.
+    eligible_indices = []
+
+    for i, name in enumerate(names):
+        if name == "salary__salary_min" or name == "salary__salary_max":
+            if salary_parsed:
+                eligible_indices.append(i)
+
+        elif name == "salary__salary_missing":
+            if salary_missing:
+                eligible_indices.append(i)
+
+        elif name == "salary__salary_unparsed":
+            if salary_unparsed:
+                eligible_indices.append(i)
+
+        else:
+            eligible_indices.append(i)
+
+    # Rank only eligible features.
+    order = sorted(
+        eligible_indices,
+        key=lambda i: contrib[i]
+    )
+
+    fraud = [
+        (names[i], contrib[i])
+        for i in order[::-1]
+        if contrib[i] > 0
+    ][:top_n]
+
+    legit = [
+        (names[i], contrib[i])
+        for i in order
+        if contrib[i] < 0
+    ][:top_n]
+
+    fmt = lambda items: [
+        {
+            "feature": _pretty(n, salary_range, input_context=True),
+            "weight": round(float(w), 4)
+        }
+        for n, w in items
+    ]
+
     return {"method": method, "toward_fraud": fmt(fraud), "toward_legit": fmt(legit)}
 
 

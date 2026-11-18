@@ -1,173 +1,280 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JobShield-AI</title>
-<style>
-  :root {
-    --bg: #f4f6fb; --card: #ffffff; --text: #1f2937; --muted: #6b7280;
-    --border: #d9dee8; --accent: #2563eb;
-    --low: #16a34a; --medium: #d97706; --high: #dc2626;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #0f172a; --card: #1e293b; --text: #e5e7eb; --muted: #9ca3af; --border: #334155; --accent: #3b82f6; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; line-height: 1.5; }
-  .wrap { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-  h1 { margin: 0; font-size: 1.8rem; }
-  .muted { color: var(--muted); font-size: .9rem; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; }
-  label { display: block; margin: .9rem 0 .3rem; font-weight: 600; font-size: .95rem; }
-  input[type=text], textarea, select { width: 100%; padding: .55rem .7rem; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
-  input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
-  textarea { min-height: 95px; resize: vertical; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
-  summary { cursor: pointer; font-weight: 600; margin-top: 1rem; }
-  .checks { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: 1rem; }
-  .checks label { display: flex; align-items: center; gap: .4rem; margin: 0; font-weight: 400; }
-  .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
-  button { font: inherit; padding: .6rem 1.2rem; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; }
-  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; margin-top: 1.2rem; }
-  button:disabled { opacity: .6; cursor: wait; }
-  .error { background: #fee2e2; color: #7f1d1d; border: 1px solid #fca5a5; border-radius: 8px; padding: .8rem 1rem; margin-bottom: 1rem; }
-  .result { border-left: 8px solid var(--c); }
-  .result.low { --c: var(--low); }
-  .result.medium { --c: var(--medium); }
-  .result.high { --c: var(--high); }
-  .result h2 { margin: 0; color: var(--c); }
-  .result h3 { margin: 1rem 0 .3rem; font-size: 1rem; }
-  .meter { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin: .6rem 0; }
-  .meter div { height: 100%; background: var(--c); }
-  .chips { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; margin: 0; list-style: none; }
-  .chip { padding: .2rem .65rem; border-radius: 999px; font-size: .85rem; border: 1px solid; }
-  .chip.up { background: rgba(220,38,38,.15); border-color: rgba(220,38,38,.45); }
-  .chip.down { background: rgba(22,163,74,.15); border-color: rgba(22,163,74,.45); }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobShield-AI</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d9dee8;
+      --accent: #2563eb;
+      --low: #16a34a;
+      --medium: #d97706;
+      --high: #dc2626;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --border: #334155;
+        --accent: #3b82f6;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    h1 { margin: 0; font-size: 1.8rem; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    label { display: block; margin: .9rem 0 .3rem; font-weight: 600; font-size: .95rem; }
+    input[type=text], textarea, select {
+      width: 100%;
+      padding: .55rem .7rem;
+      font: inherit;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: 2px solid var(--accent);
+      border-color: transparent;
+    }
+    textarea { min-height: 95px; resize: vertical; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+    summary { cursor: pointer; font-weight: 600; margin-top: 1rem; }
+    .checks { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: 1rem; }
+    .checks label { display: flex; align-items: center; gap: .4rem; margin: 0; font-weight: 400; }
+    .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+    button {
+      font: inherit;
+      padding: .6rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      margin-top: 1.2rem;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: .8rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .result { border-left: 8px solid var(--c); }
+    .result.low { --c: var(--low); }
+    .result.medium { --c: var(--medium); }
+    .result.high { --c: var(--high); }
+    .result h2 { margin: 0; color: var(--c); }
+    .result h3 { margin: 1rem 0 .3rem; font-size: 1rem; }
+    .meter {
+      height: 12px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: .6rem 0;
+    }
+    .meter div { height: 100%; background: var(--c); }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    .chip { padding: .2rem .65rem; border-radius: 999px; font-size: .85rem; border: 1px solid; }
+    .chip.up { background: rgba(220,38,38,.15); border-color: rgba(220,38,38,.45); }
+    .chip.down { background: rgba(22,163,74,.15); border-color: rgba(22,163,74,.45); }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>JobShield-AI</h1>
-  <p class="muted">Paste a job posting to check how likely it is to be fraudulent.</p>
+  <div class="wrap">
+    <h1>JobShield-AI</h1>
+    <p class="muted">Paste a job posting to check how likely it is to be fraudulent.</p>
 
-  {% if error %}<div class="error">{{ error }}</div>{% endif %}
-
-  {% if result %}
-  <section class="card result {{ result.risk_level|lower }}">
-    <h2>{{ 'Likely fraudulent' if result.is_fraud else 'Looks legitimate' }}</h2>
-    <p><strong>{{ result.percent }}%</strong> fraud risk &middot; {{ result.risk_level }}
-       (flagged at {{ (result.threshold * 100)|round|int }}% or more)</p>
-    <div class="meter"><div style="width: {{ result.percent }}%"></div></div>
-    {% for note in result.notes %}<p class="muted"><strong>Note:</strong> {{ note }}</p>{% endfor %}
-    {% if result.explanation.method != 'unavailable' %}
-    <p class="muted">Words and fields that moved this score the most.</p>
-    <div class="grid">
-      <div>
-        <h3>Pushes toward fraud</h3>
-        <ul class="chips">{% for f in result.explanation.toward_fraud %}<li class="chip up">{{ f.feature }}</li>{% else %}<li class="muted">None</li>{% endfor %}</ul>
-      </div>
-      <div>
-        <h3>Pushes toward legitimate</h3>
-        <ul class="chips">{% for f in result.explanation.toward_legit %}<li class="chip down">{{ f.feature }}</li>{% else %}<li class="muted">None</li>{% endfor %}</ul>
-      </div>
-    </div>
+    {% if error %}
+      <div class="error">{{ error }}</div>
     {% endif %}
-    <p class="muted">Automated estimate, not proof. Always verify the employer yourself.</p>
-  </section>
-  {% endif %}
 
-  <form method="post" id="check-form" class="card">
-    <div class="actions">
-      <span class="muted">Try an example:</span>
-      <button type="button" onclick="setForm(EXAMPLES.legit)">Real-looking</button>
-      <button type="button" onclick="setForm(EXAMPLES.scam)">Scam-looking</button>
-      <button type="button" onclick="setForm({})">Clear</button>
-    </div>
+    {% if result %}
+      <section class="card result {{ result.risk_level|lower }}">
+        <h2>{{ 'Likely fraudulent' if result.is_fraud else 'Looks legitimate' }}</h2>
+        <p>
+          <strong>{{ result.percent }}%</strong> fraud risk &middot; {{ result.risk_level }}
+          (flagged at {{ (result.threshold * 100)|round|int }}% or more)
+        </p>
+        <div class="meter"><div style="width: {{ result.percent }}%"></div></div>
 
-    <label for="title">Job title *</label>
-    <input type="text" id="title" name="title" value="{{ form.get('title', '') }}" required>
-
-    {% for name, label in textareas if name in ['company_profile', 'description'] %}
-    <label for="{{ name }}">{{ label }}</label>
-    {% if name == 'company_profile' %}<span class="muted">Important: the model relies heavily on this field.</span>{% endif %}
-    <textarea id="{{ name }}" name="{{ name }}" {% if name == 'description' %}required{% endif %}>{{ form.get(name, '') }}</textarea>
-    {% endfor %}
-
-    <div class="checks">
-      {% for name, label in checkboxes %}
-      <label><input type="checkbox" name="{{ name }}" {% if form.get(name) %}checked{% endif %}> {{ label }}</label>
-      {% endfor %}
-    </div>
-
-    <details id="more" {% if form %}open{% endif %}>
-      <summary>More details (optional)</summary>
-
-      {% for name, label in textareas if name not in ['company_profile', 'description'] %}
-      <label for="{{ name }}">{{ label }}</label>
-      <textarea id="{{ name }}" name="{{ name }}">{{ form.get(name, '') }}</textarea>
-      {% endfor %}
-
-      <div class="grid">
-        {% for name, label in short_fields %}
-        <div>
-          <label for="{{ name }}">{{ label }}</label>
-          <input type="text" id="{{ name }}" name="{{ name }}" value="{{ form.get(name, '') }}">
-        </div>
+        {% for note in result.notes %}
+          <p class="muted"><strong>Note:</strong> {{ note }}</p>
         {% endfor %}
-        {% for name, label, options in dropdowns %}
-        <div>
-          <label for="{{ name }}">{{ label }}</label>
-          <select id="{{ name }}" name="{{ name }}">
-            <option value="">-- not specified --</option>
-            {% for o in options %}
-            <option value="{{ o }}" {% if form.get(name) == o %}selected{% endif %}>{{ o }}</option>
-            {% endfor %}
-          </select>
-        </div>
+
+        {% if result.explanation.method != 'unavailable' %}
+          <h3>Risk Assessment</h3>
+
+          <div class="card">
+            <p><strong>Risk Score:</strong> {{ result.percent }}%</p>
+            <p><strong>Risk Level:</strong> {{ result.risk_level }}</p>
+            <p><strong>Result:</strong> {{ result.result_label }}</p>
+          </div>
+
+          <h3>Why This Result?</h3>
+          <p>{{ result.why_result }}</p>
+
+         
+
+         <h3>Why This Result?</h3>
+
+<p class="muted">
+    The following features influenced the model's prediction.
+</p>
+
+<h3>{{ result.explanation_heading }}</h3>
+
+<ul class="chips">
+    {% for f in result.relevant_features %}
+    <li class="chip {{ 'up' if result.is_fraud else 'down' }}">
+        {{ f.feature }}
+    </li>
+    {% else %}
+    <li class="muted">
+        No significant individual features were available.
+    </li>
+    {% endfor %}
+</ul>
+        {% endif %}
+
+        <p class="muted">Automated estimate, not proof. Always verify the employer yourself.</p>
+      </section>
+    {% endif %}
+
+    <form method="post" id="check-form" class="card">
+      <div class="actions">
+        <span class="muted">Try an example:</span>
+        <button type="button" onclick="setForm(EXAMPLES.legit)">Real-looking</button>
+        <button type="button" onclick="setForm(EXAMPLES.scam)">Scam-looking</button>
+        <button type="button" onclick="setForm({})">Clear</button>
+      </div>
+
+      <label for="title">Job title *</label>
+      <input type="text" id="title" name="title" value="{{ form.get('title', '') }}" required>
+
+      {% for name, label in textareas if name in ['company_profile', 'description'] %}
+        <label for="{{ name }}">{{ label }}</label>
+        {% if name == 'company_profile' %}
+          <span class="muted">Important: the model relies heavily on this field.</span>
+        {% endif %}
+        <textarea id="{{ name }}" name="{{ name }}" {% if name == 'description' %}required{% endif %}>{{ form.get(name, '') }}</textarea>
+      {% endfor %}
+
+      <div class="checks">
+        {% for name, label in checkboxes %}
+          <label>
+            <input type="checkbox" name="{{ name }}" {% if form.get(name) %}checked{% endif %}> {{ label }}
+          </label>
         {% endfor %}
       </div>
-    </details>
 
-    <button type="submit" class="primary" id="submit-btn">Check posting</button>
-  </form>
-</div>
+      <details id="more" {% if form %}open{% endif %}>
+        <summary>More details (optional)</summary>
 
-<script>
-const EXAMPLES = {
-  legit: {
-    title: "Data Analyst",
-    company_profile: "Acme Payments builds secure payment tools for banks.",
-    description: "We are a team of 50 engineers building payment software. Requires SQL and Python, 2 years experience.",
-    requirements: "BSc in Computer Science",
-    employment_type: "Full-time",
-    has_company_logo: true,
-    has_questions: true
-  },
-  scam: {
-    title: "Work from home earn $5000 weekly",
-    description: "NO EXPERIENCE NEEDED earn money fast from home",
-    salary_range: "5000-8000",
-    telecommuting: true
-  }
-};
+        {% for name, label in textareas if name not in ['company_profile', 'description'] %}
+          <label for="{{ name }}">{{ label }}</label>
+          <textarea id="{{ name }}" name="{{ name }}">{{ form.get(name, '') }}</textarea>
+        {% endfor %}
 
-function setForm(values) {
-  const form = document.getElementById("check-form");
-  for (const el of form.elements) {
-    if (!el.name) continue;
-    if (el.type === "checkbox") el.checked = !!values[el.name];
-    else el.value = values[el.name] || "";
-  }
-  document.getElementById("more").open = true;
-}
+        <div class="grid">
+          {% for name, label in short_fields %}
+            <div>
+              <label for="{{ name }}">{{ label }}</label>
+              <input type="text" id="{{ name }}" name="{{ name }}" value="{{ form.get(name, '') }}">
+            </div>
+          {% endfor %}
 
-document.getElementById("check-form").addEventListener("submit", function () {
-  const btn = document.getElementById("submit-btn");
-  btn.disabled = true;
-  btn.textContent = "Checking...";
-});
-</script>
+          {% for name, label, options in dropdowns %}
+            <div>
+              <label for="{{ name }}">{{ label }}</label>
+              <select id="{{ name }}" name="{{ name }}">
+                <option value="">-- not specified --</option>
+                {% for o in options %}
+                  <option value="{{ o }}" {% if form.get(name) == o %}selected{% endif %}>{{ o }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endfor %}
+        </div>
+      </details>
+
+      <button type="submit" class="primary" id="submit-btn">Check posting</button>
+    </form>
+  </div>
+
+  <script>
+    const EXAMPLES = {
+      legit: {
+        title: "Data Analyst",
+        company_profile: "Acme Payments builds secure payment tools for banks.",
+        description: "We are a team of 50 engineers building payment software. Requires SQL and Python, 2 years experience.",
+        requirements: "BSc in Computer Science",
+        employment_type: "Full-time",
+        has_company_logo: true,
+        has_questions: true
+      },
+      scam: {
+        title: "Work from home earn $5000 weekly",
+        description: "NO EXPERIENCE NEEDED earn money fast from home",
+        salary_range: "5000-8000",
+        telecommuting: true
+      }
+    };
+
+    function setForm(values) {
+      const form = document.getElementById("check-form");
+      for (const el of form.elements) {
+        if (!el.name) continue;
+        if (el.type === "checkbox") el.checked = !!values[el.name];
+        else el.value = values[el.name] || "";
+      }
+      document.getElementById("more").open = true;
+    }
+
+    document.getElementById("check-form").addEventListener("submit", function () {
+      const btn = document.getElementById("submit-btn");
+      btn.disabled = true;
+      btn.textContent = "Checking...";
+    });
+  </script>
 </body>
 </html>

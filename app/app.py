@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from unittest import result
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))  # so "src" can be imported
@@ -103,12 +104,98 @@ def index():
 
     try:
         result["explanation"] = explain_posting(posting, pipeline)
+
+        # Display only the features supporting the final prediction.
+        if result["is_fraud"]:
+            result["relevant_features"] = (
+                result["explanation"]["toward_fraud"]
+            )
+            result["explanation_heading"] = "Features Supporting Fraud Prediction"
+        else:
+            result["relevant_features"] = (
+                result["explanation"]["toward_legit"]
+            )
+            result["explanation_heading"] = "Features Supporting Legitimate Prediction"
+
+        fraud_features = result["explanation"]["toward_fraud"]
+        legit_features = result["explanation"]["toward_legit"]
+
+        result["result_label"] = (
+            "Likely Fraudulent" if result["is_fraud"]
+            else "Looks Legitimate"
+        )
+
+        # Build an explanation using actual model contributions.
+        supporting_features = (
+            fraud_features if result["is_fraud"] else legit_features
+        )
+
+        if supporting_features:
+            reasons = ", ".join(
+                item["feature"] for item in supporting_features[:3]
+            )
+            result["why_result"] = (
+                f"The model reached this result based on several influential "
+                f"features in the posting, including {reasons}."
+            )
+        else:
+            result["why_result"] = (
+                "The model produced this result, but no strong individual "
+                "feature contributions were available."
+            )
+
+        # Extract actual text terms that pushed the prediction toward fraud.
+        import re
+
+        result["suspicious_keywords"] = []
+
+        text_fields = {
+            "title",
+            "description",
+            "requirements",
+            "benefits",
+            "company_profile"
+        }
+
+        for item in fraud_features:
+            match = re.match(
+                r'^(' + '|'.join(text_fields) + r'): "(.*)"$',
+                item["feature"]
+            )
+
+            if match:
+                keyword = match.group(2)
+
+                if keyword not in result["suspicious_keywords"]:
+                    result["suspicious_keywords"].append(keyword)
+
+        # Keep only the top 8 text signals.
+        result["suspicious_keywords"] = result["suspicious_keywords"][:8]
+
+        # Remove duplicates while preserving order.
+        result["suspicious_keywords"] = list(
+            dict.fromkeys(result["suspicious_keywords"])
+        )[:8]
+
     except Exception:
         app.logger.exception("Explanation failed")
-        result["explanation"] = {"method": "unavailable", "toward_fraud": [], "toward_legit": []}
-        result["notes"].append("The explanation could not be generated for this posting.")
+
+        result["explanation"] = {
+            "method": "unavailable",
+            "toward_fraud": [],
+            "toward_legit": []
+        }
+
+        result["result_label"] = (
+            "Likely Fraudulent" if result["is_fraud"]
+            else "Looks Legitimate"
+        )
+
+        result["why_result"] = "A detailed explanation is currently unavailable."
+        result["suspicious_keywords"] = []
 
     return page(form, result=result)
 
+
 if __name__ == "__main__":
-        app.run(debug=False)
+    app.run(debug=False)
