@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from unittest import result
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))  # so "src" can be imported
@@ -43,9 +43,16 @@ CHECKBOXES = [
     ("has_company_logo", "Has company logo"),
     ("has_questions", "Has screening questions"),
 ]
+SALARY_PATTERN = re.compile(r"\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?")
 
+MAX_LENGTHS = {
+    "title": 200, "company_profile": 10000, "description": 20000,
+    "requirements": 10000, "benefits": 10000,
+    "location": 100, "department": 100, "industry": 100, "function": 100,
+}
+ALLOWED = {name: set(options) for name, _, options in DROPDOWNS}
 app = Flask(__name__)
-
+app.config["MAX_CONTENT_LENGTH"] = 1_000_000  # reject requests over about 1 MB
 try:
     pipeline, threshold = load_model(MODEL_PATH)
     LOAD_ERROR = None
@@ -60,7 +67,31 @@ def risk_level(p):
         return "Medium"
     return "Low"
 
+def validate(posting):
+    """Return an error message, or None if the input is fine."""
+    if not posting["title"] or not posting["description"]:
+        return "Title and description are required."
+    if len(posting["title"]) < 3:
+        return "Title is too short (at least 3 characters)."
+    if len(posting["description"]) < 20:
+        return "Description is too short (at least 20 characters)."
 
+    for col, limit in MAX_LENGTHS.items():
+        if len(posting[col]) > limit:
+            return f"{col.replace('_', ' ').capitalize()} is too long (maximum {limit} characters)."
+
+    for col, allowed in ALLOWED.items():
+        if posting[col] and posting[col] not in allowed:
+            return f"Invalid value for {col.replace('_', ' ')}."
+
+    salary = posting["salary_range"]
+    if salary:
+        if not SALARY_PATTERN.fullmatch(salary):
+            return "Salary range must look like 40000-60000 (numbers only), or leave it blank."
+        low, high = (float(x) for x in re.split(r"\s*-\s*", salary))
+        if low > high:
+            return "Salary range: the first number must not be larger than the second."
+    return None
 def page(form=None, result=None, error=None):
     return render_template(
         "index.html", form=form or {}, result=result, error=error,
@@ -84,8 +115,9 @@ def index():
         else:
             posting[col] = form.get(col, "").strip()
 
-    if not posting["title"] or not posting["description"]:
-        return page(form, error="Title and description are required.")
+    problem = validate(posting)
+    if problem:
+        return page(form, error=problem)
 
     try:
         result = predict_posting(posting, pipeline, threshold)
