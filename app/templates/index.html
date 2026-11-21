@@ -152,9 +152,6 @@
               <li class="muted">No significant individual features were available.</li>
             {% endfor %}
           </ul>
-          {% if result.suspicious_keywords %}
-            <p class="muted"><strong>Suspicious words:</strong> {{ result.suspicious_keywords|join(', ') }}</p>
-          {% endif %}
         {% endif %}
 
         <p class="muted">Automated estimate, not proof. Always verify the employer yourself.</p>
