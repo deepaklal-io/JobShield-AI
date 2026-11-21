@@ -140,40 +140,21 @@
         {% for note in result.notes %}
           <p class="muted"><strong>Note:</strong> {{ note }}</p>
         {% endfor %}
+        <h3>Why this result?</h3>
+        <p>{{ result.why_result }}</p>
 
         {% if result.explanation.method != 'unavailable' %}
-          <h3>Risk Assessment</h3>
-
-          <div class="card">
-            <p><strong>Risk Score:</strong> {{ result.percent }}%</p>
-            <p><strong>Risk Level:</strong> {{ result.risk_level }}</p>
-            <p><strong>Result:</strong> {{ result.result_label }}</p>
-          </div>
-
-          <h3>Why This Result?</h3>
-          <p>{{ result.why_result }}</p>
-
-         
-
-         <h3>Why This Result?</h3>
-
-<p class="muted">
-    The following features influenced the model's prediction.
-</p>
-
-<h3>{{ result.explanation_heading }}</h3>
-
-<ul class="chips">
-    {% for f in result.relevant_features %}
-    <li class="chip {{ 'up' if result.is_fraud else 'down' }}">
-        {{ f.feature }}
-    </li>
-    {% else %}
-    <li class="muted">
-        No significant individual features were available.
-    </li>
-    {% endfor %}
-</ul>
+          <h3>{{ result.explanation_heading }}</h3>
+          <ul class="chips">
+            {% for f in result.relevant_features %}
+              <li class="chip {{ 'up' if result.is_fraud else 'down' }}">{{ f.feature }}</li>
+            {% else %}
+              <li class="muted">No significant individual features were available.</li>
+            {% endfor %}
+          </ul>
+          {% if result.suspicious_keywords %}
+            <p class="muted"><strong>Suspicious words:</strong> {{ result.suspicious_keywords|join(', ') }}</p>
+          {% endif %}
         {% endif %}
 
         <p class="muted">Automated estimate, not proof. Always verify the employer yourself.</p>
@@ -219,7 +200,9 @@
           {% for name, label in short_fields %}
             <div>
               <label for="{{ name }}">{{ label }}</label>
-              <input type="text" id="{{ name }}" name="{{ name }}" value="{{ form.get(name, '') }}">
+             <input type="text" id="{{ name }}" name="{{ name }}" 
+             value="{{ form.get(name, '') }}" {% if name == 'salary_range' %}
+             pattern="\d+(\.\d+)?\s*-\s*\d+(\.\d+)?" title="Use the format 40000-60000 (numbers only)"{% endif %}>
             </div>
           {% endfor %}
 
